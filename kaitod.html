@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>น้องมิวไก่ทอด ✨ กรอบสนั่นสะท้านวงการ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #c0392b;
+            --yellow: #f1c40f;
+            --dark: #2c3e50;
+            --light: #fdfefe;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: #fffaf0; overflow-x: hidden; color: var(--dark); }
+
+        /* เอฟเฟกต์ฟรุงฟริง */
+        #star-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+
+        /* Navigation */
+        nav {
+            background: var(--red);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .logo { color: var(--yellow); font-size: 1.8rem; font-weight: 800; text-shadow: 1px 1px 0px #000; }
+        .nav-links button {
+            background: none; border: none; padding: 10px 15px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            color: white; transition: 0.3s; border-radius: 30px;
+        }
+        .nav-links button.active { background: var(--yellow); color: var(--red); }
+
+        /* Page System */
+        .page { display: none; max-width: 1200px; margin: 0 auto; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* New Home Design */
+        .hero-section {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 40px; padding: 60px 0; min-height: 70vh;
+        }
+        .hero-text { flex: 1; }
+        .hero-text h1 { font-size: 4.5rem; color: var(--red); line-height: 1.1; margin-bottom: 20px; }
+        .hero-text p { font-size: 1.2rem; margin-bottom: 30px; color: #555; border-left: 5px solid var(--yellow); padding-left: 15px; }
+        .hero-image { flex: 1; position: relative; }
+        .hero-image img { 
+            width: 100%; border-radius: 50% 20% 50% 20%; 
+            border: 10px solid var(--yellow); box-shadow: 20px 20px 0px var(--red);
+        }
+
+        /* Product Menu */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .card { 
+            background: white; border-radius: 25px; overflow: hidden; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s;
+            border: 1px solid #eee;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(192, 57, 43, 0.2); }
+        .card img { width: 100%; height: 250px; object-fit: cover; }
+        .card-body { padding: 25px; text-align: center; }
+        .price { font-size: 2rem; color: var(--red); font-weight: 800; margin-bottom: 15px; }
+
+        /* Cart & Payment */
+        .cart-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
+        .cart-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
+        .btn-del { background: #eb4d4b; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; }
+        
+        .pay-box { background: var(--red); color: white; padding: 30px; border-radius: 20px; text-align: center; }
+        .qr-wrap { background: white; width: 220px; height: 220px; margin: 20px auto; padding: 10px; border-radius: 10px; }
+
+        /* Reviews Section - Full Grid */
+        .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .rev-card { background: white; padding: 25px; border-radius: 20px; border-bottom: 4px solid var(--yellow); position: relative; }
+        .stars { color: var(--yellow); margin-bottom: 10px; }
+
+        .btn-order { 
+            background: var(--red); color: white; border: none; padding: 15px 30px; 
+            border-radius: 50px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1.1rem;
+        }
+        .btn-order:hover { background: #a93226; }
+
+        @media (max-width: 900px) {
+            .hero-section { flex-direction: column; text-align: center; }
+            .hero-text h1 { font-size: 3rem; }
+            .cart-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="star-canvas"></canvas>
+
+    <nav>
+        <div class="logo">🍗 NONG MIW ✨</div>
+        <div class="nav-links">
+            <button onclick="showPage('home')" id="btn-home" class="active">หน้าแรก</button>
+            <button onclick="showPage('menu')" id="btn-menu">สั่งอาหาร</button>
+            <button onclick="showPage('cart')" id="btn-cart">ตะกร้า (<span id="count">0</span>)</button>
+            <button onclick="showPage('review')" id="btn-review">รีวิวลูกค้า</button>
+        </div>
+    </nav>
+
+    <section id="home" class="page active">
+        <div class="hero-section">
+            <div class="hero-text">
+                <h1>น้องมิว<br><span style="color: var(--yellow);">ไก่ทอด</span></h1>
+                <p>สูตรลับความกรอบที่ส่งต่อจากรุ่นสู่รุ่น หมักถึงเครื่อง ทอดถึงใจ <br>กรอบจนคนข้างบ้านต้องขอพิกัด!</p>
+                <button class="btn-order" style="width: auto; background: var(--yellow); color: var(--red);" onclick="showPage('menu')">สั่งความอร่อยเลยตอนนี้ ✨</button>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1562967914-608f82629710?w=600" onerror="this.src='https://via.placeholder.com/600x400/c0392b/f1c40f?text=Fried+Chicken'">
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="page">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 40px;">เมนูยอดฮิต 🔥</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="c:\Users\Acer\Downloads\ChatGPT Image 5 ม.ค. 2569 09_24_46.png" onerror="this.src='https://via.placeholder.com/500x350/f1c40f/white?text=Menu+1'">
+                <div class="card-body">
+                    <h3>สะโพกไก่ทอดกรอบ</h3>
+                    <p class="price">45.-</p>
+                    <button class="btn-order" onclick="addToCart('สะโพกไก่ทอดกรอบ', 45)">เพิ่มลงตะกร้า 🛒</button>
+                </div>
+            </div>
+            <div class="card">
+                <img src="c:\Users\Acer\Downloads\ChatGPT Image 5 ม.ค. 2569 09_24_42.png" onerror="this.src='https://via.placeholder.com/500x350/f1c40f/white?text=Menu+2'">
+                <div class="card-body">
+                    <h3>หนังไก่ทอดสไปซี่</h3>
+                    <p class="price">39.-</p>
+                    <button class="btn-order" onclick="addToCart('หนังไก่ทอดสไปซี่', 39)">เพิ่มลงตะกร้า 🛒</button>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=500" onerror="this.src='https://via.placeholder.com/500x350/f1c40f/white?text=Menu+3'">
+                <div class="card-body">
+                    <h3>ชุดไก่ไม่มีกระดูก (5 ชิ้น)</h3>
+                    <p class="price">79.-</p>
+                    <button class="btn-order" onclick="addToCart('ชุดไก่ไม่มีกระดูก', 79)">เพิ่มลงตะกร้า 🛒</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cart" class="page">
+        <div class="cart-layout">
+            <div class="cart-box">
+                <h2>🛒 ตะกร้าของคุณ</h2>
+                <div id="cart-list" style="margin-top: 20px;"></div>
+                <div style="text-align: right; margin-top: 30px; font-size: 1.8rem;">
+                    ราคารวม: <span id="total" style="color: var(--red); font-weight: 800;">0</span> บาท
+                </div>
+            </div>
+            <div class="pay-box">
+                <h2>ชำระเงิน</h2>
+                <div class="qr-wrap">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Kittipat" style="width:100%">
+                </div>
+                <p style="font-size: 1.2rem; margin-bottom: 5px;">กิตติภัสส์ ณ เรียนงาม</p>
+                <p>ธนาคารกสิกรไทย</p>
+                <p style="font-size: 1.3rem; letter-spacing: 1px;">012-3-45678-9</p>
+                <button class="btn-order" style="background: var(--yellow); color: var(--red); margin-top: 20px;" onclick="confirmPay()">แจ้งโอนเงิน</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="review" class="page">
+        <h2 style="text-align: center; margin-bottom: 40px;">ความประทับใจจากลูกค้า ❤️</h2>
+        <div class="review-grid">
+            <div class="rev-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"หนังไก่กรอบแบบตะโกน! ทิ้งไว้นานก็ยังกรอบอยู่เลยค่ะ สุดยอดมาก"</p>
+                <strong style="display:block; margin-top:10px;">- คุณกิ๊ฟ</strong>
+            </div>
+            <div class="rev-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"ไก่ทอดหมักถึงเครื่องมาก เนื้อนุ่มชุ่มฉ่ำ ไม่แห้งเหมือนร้านอื่น"</p>
+                <strong style="display:block; margin-top:10px;">- คุณบอย</strong>
+            </div>
+            <div class="rev-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"สั่งมาทานที่ออฟฟิศ เพื่อนชอบทุกคนเลยครับ โดยเฉพาะน้ำจิ้มเด็ดมาก"</p>
+                <strong style="display:block; margin-top:10px;">- คุณเอก</strong>
+            </div>
+            <div class="rev-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"ร้านสะอาด แพ็คของดีมาก ไก่ยังร้อนๆ อยู่เลยตอนมาถึง"</p>
+                <strong style="display:block; margin-top:10px;">- น้องมายด์</strong>
+            </div>
+            <div class="rev-card">
+                <div class="stars">⭐⭐⭐⭐</div>
+                <p>"อร่อยจริงครับ แต่อยากให้เพิ่มเมนูข้าวเหนียวเยอะๆ หน่อย"</p>
+                <strong style="display:block; margin-top:10px;">- พี่หนุ่ม</strong>
+            </div>
+            <div class="rev-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"กินกี่ครั้งก็มาตรฐานเดิม กรอบสนั่นสะท้านทรวง!"</p>
+                <strong style="display:block; margin-top:10px;">- เจ๊ดา</strong>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let cart = [];
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('btn-' + id).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function addToCart(name, price) {
+            cart.push({ id: Date.now(), name, price });
+            updateCart();
+            alert('เพิ่ม ' + name + ' แล้วจ้า ✨');
+        }
+
+        function removeCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCart();
+        }
+
+        function updateCart() {
+            const list = document.getElementById('cart-list');
+            const total = document.getElementById('total');
+            document.getElementById('count').innerText = cart.length;
+
+            if(cart.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#999;">ตะกร้าว่างเปล่า...</p>';
+                total.innerText = '0';
+                return;
+            }
+
+            list.innerHTML = cart.map(i => `
+                <div class="cart-item">
+                    <span>${i.name}</span>
+                    <div>
+                        <strong style="margin-right:15px;">${i.price}.-</strong>
+                        <button class="btn-del" onclick="removeCart(${i.id})">ลบออก</button>
+                    </div>
+                </div>
+            `).join('');
+
+            total.innerText = cart.reduce((s, i) => s + i.price, 0).toLocaleString();
+        }
+
+        function confirmPay() {
+            if(cart.length === 0) return alert('เลือกของก่อนน้า');
+            alert('สั่งซื้อสำเร็จ! ส่งสลิปให้แอดมินทาง Line ได้เลยครับ');
+        }
+
+        // Star Effect
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor(x,y) { this.x=x; this.y=y; this.s=Math.random()*4; this.o=1; }
+            draw() {
+                ctx.globalAlpha = this.o; ctx.fillStyle = "#f1c40f";
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill();
+            }
+            update() { this.o -= 0.02; }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            for(let i=0; i<3; i++) dots.push(new Particle(e.x, e.y));
+        });
+
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            dots.forEach((d,i) => { d.update(); d.draw(); if(d.o<=0) dots.splice(i,1); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
